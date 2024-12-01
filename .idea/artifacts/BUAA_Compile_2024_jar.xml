@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="BUAA_Compile_2024:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/BUAA_Compile_2024_jar</output-path>
+    <root id="archive" name="BUAA_Compile_2024.jar">
+      <element id="module-output" name="BUAA_Compile_2024" />
+    </root>
+  </artifact>
+</component>
