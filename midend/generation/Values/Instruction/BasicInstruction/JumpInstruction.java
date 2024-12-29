@@ -32,4 +32,7 @@ public class JumpInstruction extends Instruction {
         new J(operands.get(0).getName());
     }
 
+    public BasicBlock getTarget() {
+        return target;
+    }
 }

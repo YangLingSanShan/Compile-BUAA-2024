@@ -10,11 +10,17 @@ import midend.generation.Values.SubModule.BasicBlock;
 import midend.generation.Values.SubModule.Parameter;
 import midend.generation.Values.Value;
 import midend.optimizer.Optimizer;
+import midend.symplifyMethod.Mem2RegUnit;
+import midend.optimizer.DominatorTree;
+import midend.optimizer.ControlFlowGraph;
+import midend.optimizer.LivenessAnalysisController;
 import backend.AssembleCodes.Others.Label;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+
 
 public class Function extends Value {
     private final LLvmIRType returnType;
@@ -102,4 +108,71 @@ public class Function extends Value {
     public ArrayList<BasicBlock> getBasicBlocks() {
         return basicBlocks;
     }
+
+    public void insertPhiProcess() {
+        Mem2RegUnit.setInitialBasicBlock(basicBlocks.get(0));
+        basicBlocks.forEach(BasicBlock::insertPhiProcess);
+    }
+
+    public void simplifyBlock() {
+        basicBlocks.forEach(BasicBlock::simplifyBlock);
+    }
+
+    public void searchBlockDominateSet() {
+        BasicBlock entry = basicBlocks.get(0);
+        for (BasicBlock basicBlock : basicBlocks) {
+            HashSet<BasicBlock> reachedSet = new HashSet<>();
+            DominatorTree.dfsDominate(entry, basicBlock, reachedSet);
+            ArrayList<BasicBlock> domList = new ArrayList<>();
+            for (BasicBlock bb : basicBlocks) {
+                if (!reachedSet.contains(bb)) {
+                    domList.add(bb);
+                }
+            }
+            DominatorTree.addBlockDominateSet(basicBlock, domList);
+        }
+    }
+
+    /**
+     * searchBlockDominanceFrontier 方法用于在该 Function 中的所有基本块中进行支配边搜索，
+     * 主要用于支配树的构建
+     * 求解DominanceFrontier是一个固定的算法,对所有的边进行遍历即可
+     */
+    public void searchBlockDominanceFrontier() {
+        for (Map.Entry<BasicBlock, ArrayList<BasicBlock>> entry :
+                ControlFlowGraph.getFunctionOutBasicBlock(this).entrySet()) {
+            BasicBlock from = entry.getKey();
+            ArrayList<BasicBlock> outBasicBlocks = entry.getValue();
+            for (BasicBlock to : outBasicBlocks) {
+                BasicBlock runner = from;
+                while (!runner.getBlockDominateSet().contains(to)
+                        || runner.equals(to)) {
+                    DominatorTree.addBlockDominanceFrontierEdge(runner, to);
+                    runner = runner.getBlockDominateParent();
+                }
+            }
+        }
+    }
+
+    /**
+     * searchBlockDominateTreeDepth 方法用于在该 Function 中的所有基本块中进行支配树深度搜索，
+     * 主要用于GCM优化
+     */
+    public void searchBlockDominateTreeDepth() {
+        DominatorTree.dfsDominateLevel(basicBlocks.get(0), 0);
+    }
+
+    public void analysisActiveness() {
+        HashMap<BasicBlock, HashSet<Value>> inMap = new HashMap<>();
+        HashMap<BasicBlock, HashSet<Value>> outMap = new HashMap<>();
+        LivenessAnalysisController.addInFunctionHashMap(this, inMap);
+        LivenessAnalysisController.addOutFunctionHashMap(this, outMap);
+        for (BasicBlock basicBlock : basicBlocks) {
+            LivenessAnalysisController.addInBlockHashSet(basicBlock, new HashSet<>());
+            LivenessAnalysisController.addOutBlockHashSet(basicBlock, new HashSet<>());
+        }
+        basicBlocks.forEach(BasicBlock::analysisActiveness);
+        LivenessAnalysisController.calculateInOut(this);
+    }
+
 }

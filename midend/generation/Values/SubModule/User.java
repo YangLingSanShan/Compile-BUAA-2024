@@ -35,4 +35,13 @@ public class User extends Value {
         replaceUse(origin, present, this);
     }
 
+    public void dropOperands() {
+        for (Value operand : operands) {
+            operand.getUses().removeIf(use -> use.getUser().equals(this));
+        }
+    }
+
+    public ArrayList<Value> getOperands() {
+        return operands;
+    }
 }

@@ -3,20 +3,12 @@ source_filename = "llvm-link"
 target datalayout = "e-m:w-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
 target triple = "x86_64-w64-windows-gnu"
 
-@g_a = dso_local global [5 x i8] c"12345"
 @.str = private unnamed_addr constant [3 x i8] c"%c\00", align 1
 @.str.1 = private unnamed_addr constant [3 x i8] c"%d\00", align 1
 @.str.2 = private unnamed_addr constant [4 x i8] c"%d:\00", align 1
 @.str.3 = private unnamed_addr constant [4 x i8] c" %d\00", align 1
 @.str.4 = private unnamed_addr constant [2 x i8] c"\0A\00", align 1
 @.str.5 = private unnamed_addr constant [3 x i8] c"%s\00", align 1
-
-define dso_local i32 @main() {
-main_block_label_0:
-  %v_0 = getelementptr inbounds [5 x i8], ptr @g_a, i32 0, i32 2
-  store i8 99, ptr %v_0, align 1
-  ret i32 0
-}
 
 ; Function Attrs: noinline nounwind optnone uwtable
 define dso_local i32 @getchar() #0 {

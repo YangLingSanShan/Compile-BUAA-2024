@@ -4,6 +4,7 @@ import midend.generation.Items.LLvmIRSpecificType.VarType;
 import midend.generation.Items.LLvmIRType;
 import midend.generation.Values.Instruction.Instruction;
 import midend.generation.Values.SubModule.BasicBlock;
+import midend.generation.Values.Value;
 
 import java.util.ArrayList;
 
@@ -39,4 +40,8 @@ public class PhiInstruction extends Instruction {
         return sb.toString();
     }
 
+    public void modifyValue(Value value, BasicBlock initialBasicBlock) {
+        operands.set(indBasicBlock.indexOf(initialBasicBlock), value);
+        value.addUseDefChain(this);
+    }
 }

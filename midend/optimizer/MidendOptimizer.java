@@ -2,6 +2,7 @@ package midend.optimizer;
 
 import midend.generation.Values.SubModule.LLvmIRModule;
 import midend.symplifyMethod.GlobalVarLocalizeUnit;
+import midend.symplifyMethod.Mem2RegUnit;
 
 public class MidendOptimizer extends Optimizer {
 
@@ -19,9 +20,15 @@ public class MidendOptimizer extends Optimizer {
         this.init();
     }
 
+    public static void build(LLvmIRModule module) {
+        ControlFlowGraph.build(module);
+        DominatorTree.build(module);
+        LivenessAnalysisController.analysis(module);
+    }
+
     private void init() {
         globalVarLocalizeSwitch = true;
-        mem2RegSwitch = true;
+        mem2RegSwitch = false;
         functionInlineSwitch = true;
         globalVariableNumberingSwitch = true;
         globalCodeMovementSwitch = true;
@@ -32,6 +39,9 @@ public class MidendOptimizer extends Optimizer {
     public void optimize() {
         if (globalVarLocalizeSwitch) {
             GlobalVarLocalizeUnit.optimize(module);
+        }
+        if (mem2RegSwitch) {
+            Mem2RegUnit.optimize(module);
         }
     }
 }

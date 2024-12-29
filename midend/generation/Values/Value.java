@@ -2,6 +2,7 @@ package midend.generation.Values;
 
 import midend.generation.Items.LLvmIRType;
 import midend.generation.Values.Instruction.BasicInstruction.AllocaInstruction;
+import midend.generation.Values.Instruction.BasicInstruction.PhiInstruction;
 import midend.generation.Values.SubModule.User;
 import midend.optimizer.Use;
 
@@ -39,6 +40,10 @@ public class Value {
         return uses.stream().map(Use::getUser).collect(Collectors.toCollection(ArrayList::new));
     }
 
+    public ArrayList<Use> getUses() {
+        return uses;
+    }
+
     public void replaceUse(Value value) {
         ArrayList<Use> useDefCopy = new ArrayList<>(uses);
         for (Use use : useDefCopy) {
@@ -54,5 +59,17 @@ public class Value {
 
     public void deleteUse(User user) {
         uses.removeIf(value -> value.getUser().equals(user));
+    }
+
+    public void replaceAllUse(Value value) {
+        ArrayList<Use> useDefCopy = new ArrayList<>(getUses());
+        for (Use use : useDefCopy) {
+            User user = use.getUser();
+            user.replaceOperand(this, value);
+        }
+    }
+
+    public void addUseDefChain(User user) {
+        uses.add(new Use(user, this));
     }
 }

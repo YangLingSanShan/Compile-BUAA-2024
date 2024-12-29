@@ -1,5 +1,6 @@
 .data
-g_a: .word 0, 0, 0, 0, 0
+g_x: .word 0, 1, 2, 3, 4
+g_y: .word 0
 
 
 
@@ -11,32 +12,55 @@ j end
 main:
 main_block_label_0:
 
-# %v_0 = sub i32 0, 19
-li , $k0 , 0
-li , $k1 , 19
-subu , $k0 , $k0 , $k1
+# %v_1 = getelementptr inbounds [5 x i32], [5 x i32]* @g_x, i32 0, i32 1
+la , $k0 , g_x
+addi , $k0 , $k0 , 4
 sw , $k0 , -4($sp)
 
-# %v_1 = sub i32 0, 19
-li , $k0 , 0
-li , $k1 , 19
-subu , $k0 , $k0 , $k1
+# %v_0 = load i32, i32* %v_1
+lw , $k0 , -4($sp)
+lw , $k0 , 0($k0)
 sw , $k0 , -8($sp)
 
-# %v_2 = getelementptr inbounds [5 x i32], [5 x i32]* @g_a, i32 0, i32 %v_1
-la , $k0 , g_a
+# %v_3 = getelementptr inbounds [5 x i32], [5 x i32]* @g_x, i32 0, i32 %v_0
+la , $k0 , g_x
 lw , $k1 , -8($sp)
 sll , $k1 , $k1 , 2
 addu , $k0 , $k1 , $k0
 sw , $k0 , -12($sp)
 
-# %v_3 = zext i8 99 to i32
-li , $k0 , 99
+# %v_2 = load i32, i32* %v_3
+lw , $k0 , -12($sp)
+lw , $k0 , 0($k0)
 sw , $k0 , -16($sp)
 
-# store i32 %v_3, i32* %v_2
-lw , $k1 , -12($sp)
+# %v_4 = sub i32 3, 1
+li , $k0 , 3
+li , $k1 , 1
+subu , $k0 , $k0 , $k1
+sw , $k0 , -20($sp)
+
+# %v_6 = getelementptr inbounds [5 x i32], [5 x i32]* @g_x, i32 0, i32 %v_4
+la , $k0 , g_x
+lw , $k1 , -20($sp)
+sll , $k1 , $k1 , 2
+addu , $k0 , $k1 , $k0
+sw , $k0 , -24($sp)
+
+# %v_5 = load i32, i32* %v_6
+lw , $k0 , -24($sp)
+lw , $k0 , 0($k0)
+sw , $k0 , -28($sp)
+
+# %v_7 = add i32 %v_2, %v_5
 lw , $k0 , -16($sp)
+lw , $k1 , -28($sp)
+addu , $k0 , $k0 , $k1
+sw , $k0 , -32($sp)
+
+# store i32 %v_7, i32* @g_y
+la , $k1 , g_y
+lw , $k0 , -32($sp)
 sw , $k0 , 0($k1)
 
 # ret i32 0

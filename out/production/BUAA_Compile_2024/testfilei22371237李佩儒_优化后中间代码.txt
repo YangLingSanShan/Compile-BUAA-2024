@@ -5,16 +5,21 @@ declare void @putch(i32)
 declare void @putstr(i8*)
 
 
-@g_a = dso_local global [5 x i32] [i32 0, i32 0, i32 0, i32 0, i32 0]
+@g_x = dso_local global [5 x i32] [i32 0, i32 1, i32 2, i32 3, i32 4]
+@g_y = dso_local global i32 0
 
 define dso_local i32 @main() {
 
 main_block_label_0:
-	%v_0 = sub i32 0, 19
-	%v_1 = sub i32 0, 19
-	%v_2 = getelementptr inbounds [5 x i32], [5 x i32]* @g_a, i32 0, i32 %v_1
-	%v_3 = zext i8 99 to i32
-	store i32 %v_3, i32* %v_2
+	%v_1 = getelementptr inbounds [5 x i32], [5 x i32]* @g_x, i32 0, i32 1
+	%v_0 = load i32, i32* %v_1
+	%v_3 = getelementptr inbounds [5 x i32], [5 x i32]* @g_x, i32 0, i32 %v_0
+	%v_2 = load i32, i32* %v_3
+	%v_4 = sub i32 3, 1
+	%v_6 = getelementptr inbounds [5 x i32], [5 x i32]* @g_x, i32 0, i32 %v_4
+	%v_5 = load i32, i32* %v_6
+	%v_7 = add i32 %v_2, %v_5
+	store i32 %v_7, i32* @g_y
 	ret i32 0
 }
 

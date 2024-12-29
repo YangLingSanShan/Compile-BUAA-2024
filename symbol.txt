@@ -1,1 +1,5 @@
-2 a IntArray
+1 x ConstIntArray
+1 tmp ConstInt
+1 a IntArray
+1 yy ConstIntArray
+1 y Int

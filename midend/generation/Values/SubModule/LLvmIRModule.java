@@ -4,6 +4,7 @@ import backend.AssembleCodes.Codes.Specific.J;
 import backend.AssembleCodes.Codes.Specific.Jal;
 import backend.AssembleCodes.Others.Comment;
 import backend.AssembleCodes.Others.Label;
+import midend.Units.BlockOptimizer;
 import midend.generation.Items.LLvmIRSpecificType.StructType;
 import midend.generation.Values.Instruction.IOInstruction.*;
 import midend.generation.Values.Value;
@@ -76,5 +77,10 @@ public class LLvmIRModule extends Value {
 
     public ArrayList<Function> getFunctions() {
         return functions;
+    }
+
+    public void simplifyBlock() {
+        functions.forEach(Function::simplifyBlock);
+        functions.forEach(BlockOptimizer::deleteDeadBlock);
     }
 }

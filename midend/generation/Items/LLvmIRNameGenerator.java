@@ -144,4 +144,10 @@ public class LLvmIRNameGenerator {
     public static void addGlobalVar(GlobalVar globalVar) {
         nowLLvmIRModule.addGlobalVar(globalVar);
     }
+
+    public static void sub(Function... function) {
+        Function presentFunction = ((function.length == 0) ? nowFunction : function[0]);
+        int localVarNameIndex = localVarNameIndexes.get(presentFunction);
+        localVarNameIndexes.put(presentFunction, localVarNameIndex - 1);
+    }
 }

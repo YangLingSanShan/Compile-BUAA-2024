@@ -104,7 +104,12 @@ public class LLvmIRDefiner {
 
         for (AstNode child : root.getChildren()) {
             if ("<Exp>".equals(child.getGrammar())) {
-                values.add(LLvmIRGenerator.getInstance().llvmIRAnalyse(child));
+                Value value = LLvmIRGenerator.getInstance().llvmIRAnalyse(child);
+                if (value instanceof CallInstruction) {
+                    value = ((CallInstruction) value).getBelongBasicBlock().removeAndReturnInstruction();
+                }
+                values.add(value);
+
             }
         }
 
